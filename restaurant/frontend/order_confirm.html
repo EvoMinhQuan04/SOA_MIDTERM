@@ -1,0 +1,200 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <title>Kitchen Orders</title>
+    <link href="css/pos.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="tables.html">Admin Panel</a>
+
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <a id="tableShowId" class="nav-link" href="tables.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-cash-register"></i></div>
+                        Bàn ăn
+                    </a>
+                    <a id="orderShowId" class="nav-link" href="list_order.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                        Đơn hàng
+                    </a>
+                    <a id="kitchenShowId" class="nav-link" href="kitchen.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-table-cells"></i></div>
+                        Nhà bếp
+                    </a>
+                    <a id="menuShowId" class="nav-link" href="menu.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-utensils"></i></div>
+                        Thực đơn
+                    </a>
+                    <a id="billingShowId" class="nav-link" href="billing.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Hóa đơn
+                    </a>
+                    <a class="nav-link" onclick="logout()" href="#">
+                        <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                        Đăng xuất
+                    </a>
+
+
+
+
+                </div>
+            </div>
+            <div class="sb-sidenav-footer">
+                <div id="loggedUsername" class="small">Logged in as:</div>
+            </div>
+        </nav>
+    </div>
+</div>
+<div id="content-for-template">Content</div>
+
+
+<script src="../js/scripts.js" type="text/javascript"></script>
+
+<div class="container mt-5" style="padding-left: 100px;">
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3 class="card-title">Thanh toán hóa đơn</h3>
+        </div>
+        <div class="card-body">
+            <h5 id="tableId">Số bàn: 12345</h5>
+            <h5 id="customerInfo">Khách hàng: Binh can - 03322837712</h5>
+            <div class="table-responsive">
+                <table id="orderDetailTable" class="table table-bordered text-center">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th>Mã món</th>
+                            <th>Tên món ăn</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                    </tbody>
+                </table>
+            </div>
+            <hr>
+            <div class="text-end">
+                <strong id="">Total:</strong> <strong id="totalPrice">RM 75.90</strong><br>
+                <strong id="">Tax (10%):</strong> <strong id="totalTax">RM 75.90</strong><br>
+                <strong>Grand Total: </strong> <strong id="total">RM 75.90</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3 text-end">
+    <button class="btn btn-secondary me-2" onclick="goBack()">Quay lại</button>
+    <button class="btn btn-dark" onclick="confirmPayment()">Thanh toán</button>
+</div>
+
+</body>
+<script>
+     function fetchOrder() {
+        const table = document.getElementById("orderDetailTable");
+        const tbody = table.querySelector("tbody");
+            if (tbody) {
+                tbody.innerHTML = ""; // Clear only the tbody
+            }
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        console.log("ID=" + id);
+        fetch("http://localhost:8080/api/v1/orders/" + id)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                
+                data['orderDetails'].forEach(value => {
+                    const dataHtml = `
+                        <tr>
+                            <td>${value.foodId}</td>
+                            <td>${value.foodName}</td>
+                            <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.foodPrice)}</td>
+                            <td>${value.quantity}</td>
+                            <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.totalPrice)}</td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', dataHtml);
+                });
+                document.getElementById('tableId').textContent = 'Số bàn: ' + data.tableId;
+                document.getElementById('customerInfo').textContent = 'Khách hàng: ' +  data.customerName + " - " + data.customerPhone;
+                document.getElementById('totalPrice').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.totalPrice);
+                document.getElementById('totalTax').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.totalTax);
+                document.getElementById('total').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.total);
+            })
+    }
+
+    function goBack() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        window.location.href = "order_detail.html?id=" + id;
+
+    }
+
+    function confirmPayment() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+
+                        fetch("http://localhost:8080/api/v1/orders/" + id + "/payment", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        })
+                        .then(response => {
+   
+                            return {}; 
+                        })
+                        .then(result => {
+                            Swal.fire({
+                            title: "Thành công!",
+                            text: "Bạn đã thanh toán thành công",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                            })
+                            .then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "list_order.html";
+                                }
+                            });
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            alert("Có lỗi xảy ra!"); 
+                        });
+      
+    }
+
+    fetchOrder();
+</script>
+<script src="js/login.js"></script>
+
+</html>

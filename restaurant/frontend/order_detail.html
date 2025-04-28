@@ -1,0 +1,563 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <title>Home Page</title>
+    <link href="css/pos.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+</head>
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="tables.html">Admin Panel</a>
+
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <a id="tableShowId" class="nav-link" href="tables.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-cash-register"></i></div>
+                        Bàn ăn
+                    </a>
+                    <a id="orderShowId" class="nav-link" href="list_order.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                        Đơn hàng
+                    </a>
+                    <a id="kitchenShowId" class="nav-link" href="kitchen.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-table-cells"></i></div>
+                        Nhà bếp
+                    </a>
+                    <a id="menuShowId" class="nav-link" href="menu.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-utensils"></i></div>
+                        Thực đơn
+                    </a>
+                    <a id="billingShowId" class="nav-link" href="billing.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Hóa đơn
+                    </a>
+                    <a class="nav-link" onclick="logout()" href="#">
+                        <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                        Đăng xuất
+                    </a>
+
+
+
+
+                </div>
+            </div>
+            <div class="sb-sidenav-footer">
+                <div id="loggedUsername" class="small">Logged in as:</div>
+            </div>
+        </nav>
+    </div>
+</div>
+<div id="content-for-template">Content</div>
+
+
+<script src="../js/scripts.js" type="text/javascript"></script>
+
+<div class="container-fluid" style="padding-left: 50px">
+    <div class="row">
+        <!-- Item Selection Section -->
+        <div id="menuBox" class="col-md-6 order-md-1 m-1" id="item-select-section">
+            <div class="container-fluid pt-4 pl-500 row" style="margin-left: 10rem;width: 81%;">
+                <div class="mt-5 mb-2">
+                    <h3 class="pull-left">Thực đơn</h3>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" required="" id="search" name="search" class="form-control" placeholder="Tên món ăn...">
+                        </div>
+                        <div class="col-md-4">
+                            <select id="categoryFilter" name="category" class="form-control">
+                                <option value="">-- Tất cả loại --</option>
+                     
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button onclick="searchFood()" class="btn btn-dark">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu Items Table -->
+                <div style="max-height: 45rem;overflow-y: auto;">
+                    <table id="menuTable" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên món</th>
+                            <th>Ảnh</th>
+                            <th>Loại</th>
+                            <th>Giá</th>
+                            <th>Thêm</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                       
+
+
+
+                        <!-- More rows will be here -->
+                        </tbody>
+                    </table>
+
+            
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Cart Section -->
+        <div id="hoaDonBox" class="col-md-4 order-md-2 m-1" id="cart-section">
+            <div class="container-fluid pt-5 pl-600 pr-6 row mt-3" style="max-width: 200%; width:150%;">
+                <div id="orderSection" class="cart-section">
+                    <h3>Hóa đơn</h3>
+                    <table id = "orderDetailTable" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Mã món</th>
+                            <th>Tên món ăn</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng giá</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                       
+                        <!-- More rows will be here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Cart Total & Taxes -->
+                    <hr>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td><strong>Tổng tiền</strong></td>
+                                <td id="totalPrice">100.000</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Thuế</strong></td>
+                                <td id="totalTax">10% (10.000)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Số tiền cần thanh toán</strong></td>
+                                <td id="total">110.000 VND</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Payment & Receipt -->
+                    <div>
+                        <div id="alertPayment" class="alert alert-success" role="alert">
+                            Bill has already been paid.
+                        </div>
+                        <a href="receipt.php?bill_id={{bill_id}}" class="btn btn-light">In hóa đơn <span class="fa fa-receipt text-black"></span></a>
+                    </div>
+                    <br>
+                    <a id="confirmOrder" href="" class="btn btn-success">Thanh toán</a>
+                </div>
+
+                <!-- New Customer Form -->
+                <form id="huyHoaDon" class="mt-3" >
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="overlay"></div>
+
+<!-- Modal -->
+<div id="editModal">
+  <div class="modal-content">
+    <h2>Sửa món ăn</h2>
+    <form id="editForm">
+      <input type="hidden" id="editFoodId" />
+      <p><strong>Tên món:</strong> <span id="editFoodName"></span></p>
+
+      <label>Ghi chú:</label>
+      <textarea id="editNote" rows="3" placeholder="Nhập ghi chú nếu có..."></textarea>
+
+      <label>Số lượng:</label>
+      <input type="number" id="editQuantity" required />
+
+      <div class="modal-buttons">
+        <button type="submit" class="btn btn-info">Lưu</button>
+        <button type="button" class="btn btn-dark" id="cancelEdit">Huỷ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+</body>
+
+<script>
+
+   
+
+    function fetchOrder() {
+        const table = document.getElementById("orderDetailTable");
+        const tbody = table.querySelector("tbody");
+            if (tbody) {
+                tbody.innerHTML = ""; // Clear only the tbody
+            }
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
+        const tableId = urlParams.get("table");
+        
+        if(tableId) {
+            fetch("http://localhost:8080/api/v1/orders/table/" + tableId)
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = "order_detail.html?id=" + data.id;
+            })
+
+            return;
+        }
+        fetch("http://localhost:8080/api/v1/orders/" + id)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                
+                data['orderDetails'].forEach(value => {
+                    const dataHtml = `
+                        <tr>
+                            <td>${value.foodId}</td>
+                            <td>${value.foodName}</td>
+                            <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.foodPrice)}</td>
+                            <td>${value.quantity}</td>
+                            <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.totalPrice)}</td>
+                             <td>
+                                <!-- Delete Cart Item -->
+                                <a class="btn btn-info edit-btn" data-id="${value.id}" id="editOrderDetail" data-name="${value.foodName}" data-note="${value.note}" data-quantity="${value.quantity}" href="#">Edit</a>
+                                <a class="btn btn-dark" onclick="deleteOrderDetail(${value.id})" href="#">Delete</a>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', dataHtml);
+                });
+                
+                document.getElementById('confirmOrder').href = 'order_confirm.html?id=' + id;
+                if(data.status == 1) {
+                    let div = document.getElementById("confirmOrder");
+                    div.style.display = "none"; 
+                    document.getElementById('alertPayment').textContent = 'ĐÃ THANH TOÁN';
+                } else {
+                    document.getElementById("alertPayment").classList.replace("alert-success", "alert-danger");
+                    document.getElementById('alertPayment').textContent = 'CHƯA THANH TOÁN';
+                    document.getElementById('huyHoaDon').innerHTML = `
+                                            <button type="submit" onclick="cancelOrder(event)" name="new_customer" value="true" class="btn btn-warning">Hủy hóa đơn</button>
+
+                    `;
+
+
+                }
+                document.getElementById('totalPrice').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.totalPrice);
+                document.getElementById('totalTax').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.totalTax);
+                document.getElementById('total').textContent = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(data.total);
+                
+                // modal
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Extract data from attributes
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const note = this.dataset.note;
+                const quantity = this.dataset.quantity;
+
+                // Set modal values
+                document.getElementById('editFoodId').value = id;
+                document.getElementById('editFoodName').textContent = name;
+                document.getElementById('editNote').value = note;
+                document.getElementById('editQuantity').value = quantity;
+
+                // Show modal
+                document.getElementById('editModal').style.display = 'block';
+                });
+            });
+
+            // Cancel button
+            document.getElementById('cancelEdit').addEventListener('click', () => {
+                document.getElementById('editModal').style.display = 'none';
+            });
+
+            // Handle form submit
+            document.getElementById('editForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const updatedId = document.getElementById('editFoodId').value;
+                const updateNote = document.getElementById('editNote').value;
+                const updatedQuantity = document.getElementById('editQuantity').value;
+
+                updateOrderDetail(updatedId, updateNote, updatedQuantity);
+                // Hide modal
+                document.getElementById('editModal').style.display = 'none';
+            });
+            })
+    }
+
+    function cancelOrder(event) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get("id");
+        event.preventDefault();
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hủy hóa đơn',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log("DA HUY");
+                fetch("http://localhost:8080/api/v1/orders/" + orderId, {
+                    method: 'DELETE'
+                })
+                .then(response => {})
+                .then(data => {
+                    Swal.fire('Đã xóa!', 'Hóa đã được xóa.', 'success');
+                    window.location.href = "tables.html";
+                })
+                .catch(error => {
+                    Swal.fire('Lỗi!', 'Xảy ra lỗi khi xóa.', 'error');
+                    console.error(error);
+                });
+            }
+        });
+    }
+    function deleteOrderDetail(id) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get("id");
+            Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("http://localhost:8080/api/v1/orderDetails/" + id, {
+                    method: 'DELETE'
+                })
+                .then(response => {})
+                .then(data => {
+                    Swal.fire('Đã xóa!', 'Món ăn đã được xóa.', 'success');
+                    window.location.href = "order_detail.html?id=" + orderId;
+                })
+                .catch(error => {
+                    Swal.fire('Lỗi!', 'Xảy ra lỗi khi xóa.', 'error');
+                    console.error(error);
+                });
+            }
+        });
+    }
+
+    function updateOrderDetail(id, note, quantity) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get("id");
+        let data = {
+                "id": id,
+                "note": note,
+                "quantity": quantity
+            }
+            fetch("http://localhost:8080/api/v1/orderDetails", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+
+                    return {};
+                })
+                .then(result => {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: "Thành công",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "order_detail.html?id=" + orderId;
+                            }
+                        });
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Có lỗi xảy ra!");
+                });
+    }
+
+    function fetchMenu() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderID = urlParams.get("id");
+        fetch("http://localhost:8080/api/v1/foods?status=1")
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                console.log("Menu: " + data);
+                fillDataMenu(data);
+            })
+    }
+
+    function fillDataMenu(data) {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const orderID = urlParams.get("id");
+
+        document.getElementById('menuTable').querySelector("tbody").innerHTML = "";
+
+        data.forEach(value => {
+                    const dataHtml = `
+                        
+                        <tr>
+                            <td>${value.id}</td>
+                            <td>${value.name}</td>
+                            <td><img src="${value.image}" alt="${value.name}" style="width: 60px; height: 60px; object-fit: cover;" /></td>
+                            <th>${value.category}</th>
+                            <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.price)}</td>
+                            <td>
+                                <!-- Add to Cart Form -->
+                                <form id="addItemToOrder_${value.id}">
+                                    <input type="number" name="foodId" value="${value.id}" hidden>
+                                    <span>
+                                       <input type="number" name="quantity" style="width:120px" placeholder="1 to 1000" required min="1" max="1000">
+                                        <input type="hidden" name="addToCart" value="1">
+                                        <button type="submit" class="btn btn-primary">Thêm món</button>
+                                    </span>
+
+                                </form>
+                            </td>
+                        </tr>
+                    `;
+
+
+                    document.getElementById('menuTable').querySelector("tbody").insertAdjacentHTML('beforeend', dataHtml);
+                    document.getElementById('addItemToOrder_' + value.id).addEventListener("submit", function(event) {
+                        event.preventDefault(); // Ngăn chặn hành vi gửi form mặc định
+                        console.log("Prevent Ok!");
+                        const formData = new FormData(this);
+                        const data = Object.fromEntries(formData.entries());
+                        data['orderId'] = orderID;
+                        
+                        fetch("http://localhost:8080/api/v1/orders/" + orderID + "/add", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => {
+                            // if (response) {
+                            //     return JSON.parse(response); // Only parse JSON if there's content
+                            // }
+                            return {}; 
+                        })
+                        .then(result => {
+                            Swal.fire({
+                            title: "Thành công!",
+                            text: "Thêm món thành công",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                            });
+                            fetchOrder();
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: "Thất bại!",
+                                text: "Thêm món thất bại do hóa đơn đã thanh toán",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }); 
+                        });
+                    });
+                        
+                });
+    }
+
+    function fetchCategories() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderID = urlParams.get("id");
+        fetch("http://localhost:8080/api/v1/foods/categories")
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                data.forEach(value => {
+                    const dataHtml = `
+                        
+                        <option value="${value}">${value}</option>
+
+                    `;
+
+         
+                    document.getElementById('categoryFilter').insertAdjacentHTML('beforeend', dataHtml);
+                   
+                        
+                });
+            })
+    }
+
+    function searchFood() {
+   
+        const searchText = document.getElementById("search").value;
+        const category = document.getElementById("categoryFilter").value;
+
+        fetch("http://localhost:8080/api/v1/foods/search?status=1&name=" + searchText + "&category=" + category)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                console.log("Search: " + data);
+                fillDataMenu(data);
+            })
+    }
+    fetchOrder();
+    fetchMenu();
+    fetchCategories();
+
+</script>
+<script src="js/login.js"></script>
+
+</html>

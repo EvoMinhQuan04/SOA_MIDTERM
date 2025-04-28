@@ -1,0 +1,256 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <title>Kitchen Orders</title>
+    <link href="css/pos.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body class="sb-nav-fixed">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="tables.html">Admin Panel</a>
+
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <a id="tableShowId" class="nav-link" href="tables.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-cash-register"></i></div>
+                        Bàn ăn
+                    </a>
+                    <a id="orderShowId" class="nav-link" href="list_order.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                        Đơn hàng
+                    </a>
+                    <a id="kitchenShowId" class="nav-link" href="kitchen.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-table-cells"></i></div>
+                        Nhà bếp
+                    </a>
+                    <a id="menuShowId" class="nav-link" href="menu.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-utensils"></i></div>
+                        Thực đơn
+                    </a>
+                    <a id="billingShowId" class="nav-link" href="billing.html">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                        Hóa đơn
+                    </a>
+                    <a class="nav-link" onclick="logout()" href="#">
+                        <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                        Đăng xuất
+                    </a>
+
+
+
+                </div>
+            </div>
+            <div class="sb-sidenav-footer">
+                <div id="loggedUsername" class="small">Logged in as:</div>
+            </div>
+        </nav>
+    </div>
+</div>
+<div id="content-for-template">Content</div>
+
+
+<script src="../js/scripts.js" type="text/javascript"></script>
+
+<div class="wrapper" style="width: 100%; padding-left: 250px;">
+    <div class="container-fluid pt-5 mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-primary">Danh sách bàn ăn</h2>
+            
+            <!-- Search Bar -->
+            <div class="input-group" style="max-width: 300px;">
+                <input type="text" id="searchBox" class="form-control" placeholder="Search...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="list_table" class="table table-hover table-striped table-bordered text-center shadow-sm" id="ordersTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Bàn</th>
+                        <th>Số người</th>
+                        <th>Trạng thái</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    function myFunction() {
+        fetch("http://localhost:8080/api/v1/tables")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(value => {
+                    let statusText = "";
+                    let statusClass = "";
+                    
+                    if (value.status === 1) {
+                        statusText = "Khả dụng";
+                        statusClass = "text-success";
+                    } else if (value.status === 0) {
+                        statusText = "Đang sử dụng";
+                        statusClass = "text-danger";
+                    } else {
+                        statusText = "Không xác định";
+                        statusClass = "text-warning";
+                    }
+                    
+                    const dataHtml = `
+                        <tr>
+                            <td>${value.id}</td>
+                            <td>${value.capacity} người</td>
+                            <td class="${statusClass}">${statusText}</td>
+                            <td id="action_${value.id}"></td>
+                        </tr>
+                    `;
+
+                    document.getElementById('list_table').insertAdjacentHTML('beforeend', dataHtml);
+                    
+                    if (value.status === 1) {
+                        const actionHtml = `
+                            <a href="#" class="btn btn-sm btn-success create-table-btn" data-table-id="${value.id}">
+                                <i class="fas fa-check"></i> Tạo bàn
+                            </a>`;
+                        document.getElementById('action_' + value.id).insertAdjacentHTML('beforeend', actionHtml);
+                    } else if (value.status === 0) {
+                        const actionHtml = `
+                            <a href="order_detail.html?table=${value.id}" class="btn btn-sm btn-success">
+                                <i class="fas fa-info-circle"></i> Xem chi tiết
+                            </a>
+            
+                        `;
+                        document.getElementById('action_' + value.id).insertAdjacentHTML('beforeend', actionHtml);
+                    }
+                });
+
+                // Gán sự kiện click cho nút "Tạo bàn"
+                document.querySelectorAll('.create-table-btn').forEach(btn => {
+                    btn.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        const tableId = this.getAttribute('data-table-id');
+                        document.getElementById('selectedTableId').value = tableId;
+                        $('#customerModal').modal('show'); // Hiển thị modal
+                    });
+                });
+            });
+    }
+    myFunction();
+
+    // Xử lý khi nhấn xác nhận tạo bàn
+    document.getElementById('confirmCreateTable').addEventListener('click', function () {
+        const tableId = document.getElementById('selectedTableId').value;
+        const customerName = document.getElementById('customerName').value;
+        const customerPhone = document.getElementById('customerPhone').value;
+
+        if (!customerName || !customerPhone) {
+            alert("Vui lòng nhập đầy đủ thông tin khách hàng!");
+            return;
+        }
+
+        const requestData = {
+            tableId: tableId,
+            customerName: customerName,
+            customerPhone: customerPhone
+        };
+
+        fetch("http://localhost:8080/api/v1/orders/new", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {})
+        .then(data => {
+            Swal.fire({
+                            title: "Thành công!",
+                            text: "Bạn đã thanh toán thành công",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                            });
+
+        })
+        .catch(error => {
+            Swal.fire({
+                            title: "Thành công!",
+                            text: "Bạn đã thanh toán thành công",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                            });
+        });
+
+        $('#customerModal').modal('hide'); // Ẩn modal sau khi gửi yêu cầu
+        window.location.href = "list_order.html";
+    });
+});
+                    </script>
+                
+       
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">Nhập thông tin khách hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm">
+                    <div class="form-group">
+                        <label for="customerName">Tên khách hàng:</label>
+                        <input type="text" class="form-control" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Số điện thoại:</label>
+                        <input type="text" class="form-control" id="customerPhone" required>
+                    </div>
+                    <input type="hidden" id="selectedTableId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmCreateTable">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/login.js"></script>
+
+</html>

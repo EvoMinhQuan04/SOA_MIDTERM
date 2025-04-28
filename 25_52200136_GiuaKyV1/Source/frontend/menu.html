@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <title>Kitchen Orders</title>
+    <link href="css/pos.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="tables.html">Admin Panel</a>
+
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <a id="tableShowId" class="nav-link" href="tables.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cash-register"></i></div>
+                            Bàn ăn
+                        </a>
+                        <a id="orderShowId" class="nav-link" href="list_order.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                            Đơn hàng
+                        </a>
+                        <a id="kitchenShowId" class="nav-link" href="kitchen.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table-cells"></i></div>
+                            Nhà bếp
+                        </a>
+                        <a id="menuShowId" class="nav-link" href="menu.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-utensils"></i></div>
+                            Thực đơn
+                        </a>
+                        <a id="billingShowId" class="nav-link" href="billing.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                            Hóa đơn
+                        </a>
+                        <a class="nav-link" onclick="logout()" href="#">
+                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                            Đăng xuất
+                        </a>
+    
+
+
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div id="loggedUsername" class="small">Logged in as:</div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div id="content-for-template">Content</div>
+
+
+    <script src="../js/scripts.js" type="text/javascript"></script>
+
+    <div class="wrapper" style="width: 100%; padding-left: 250px;">
+        <div class="container-fluid pt-5 mt-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-primary">Danh sách món ăn</h2>
+
+                <!-- Search Bar -->
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" id="searchBox" class="form-control" placeholder="Search...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- Search Bar -->
+                <div class="input-group" style="max-width: 300px;">
+                    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addFoodModal">
+                        <i class="fas fa-plus"></i> Thêm Món Ăn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Thêm Món -->
+            <div class="modal fade" id="addFoodModal" tabindex="-1" role="dialog" aria-labelledby="addFoodModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addFoodModalLabel">Thêm Món Ăn Mới</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addFoodForm">
+                                <div class="form-group">
+                                    <label for="name">Tên món ăn</label>
+                                    <input type="text" name="name" class="form-control" id="name" placeholder="Nhập tên món ăn"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="category">Thể loại</label>
+                                    <select class="form-control" id="category" name="category">
+                                        <option>Đồ ăn</option>
+                                        <option>Đồ uống</option>
+                                        <option>Tráng miệng</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="image">Link ảnh món</label>
+                                    <input type="text" name="image" class="form-control" id="image" placeholder="Nhập ảnh món"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="price">Đơn giá</label>
+                                    <input type="number" name="price" class="form-control" id="price" placeholder="Nhập giá tiền"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Trạng thái</label>
+                                    <select name="status" class="form-control" id="status">
+                                        <option value="1">Khả dụng</option>
+                                        <option value="0">Hết</option>
+                                    </select>
+                                </div>
+                                <button id="addFoodButton" class="btn btn-primary">Thêm món</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-bordered text-center shadow-sm" id="foodTables">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên món</th>
+                            <th>Ảnh</th>
+                            <th>Thể loại</th>
+                            <th>Đơn giá</th>
+                            <th>Trạng thái</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function fetchFoods() {
+            fetch("http://localhost:8080/api/v1/foods")
+                .then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    data.forEach(value => {
+                        let statusText = "";
+                        let statusClass = "";
+
+                        let clickText = "";
+                        let clickClass = "";
+                        let buttonClass = "";
+
+                        if (value.status === 0) {
+                            statusText = "Hết";
+                            statusClass = "text-danger";
+                            buttonClass = "btn-success";
+                            clickClass = "fa-check";
+                            clickText = "Còn món";
+                        } else if (value.status === 1) {
+                            statusText = "Khả dụng";
+                            statusClass = "text-success";
+                            buttonClass = "btn-danger";
+                            clickClass = "fa-times";
+                            clickText = "Hết món";
+
+                        }
+
+                        const dataHtml = `
+                                     <tr>
+                                        <td>${value.id}</td>
+                                        <td>${value.name}</td>
+                                        <td><img src="${value.image}" alt="${value.name}" style="width: 60px; height: 60px; object-fit: cover;" /></td>
+                                        <td>${value.category}</td>
+                                        <td>${new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value.price)}</td>
+
+                                        <td class="${statusClass}">${statusText}</td>
+                                        <td>
+                                            <button class="btn btn-sm ${buttonClass}" onclick="changeStatus(${value.id}, ${value.status})"><i class="fas ${clickClass}"></i> ${clickText}</button>
+                                        </td>
+                                    </tr>
+                                        `;
+
+
+                        document.getElementById('foodTables').insertAdjacentHTML('beforeend', dataHtml);
+
+                        // if (value.status === 1) {
+                        //     const actionHtml = `
+                        //                         <a href="order_detail.html?id=${value.id}" class="btn btn-sm btn-success"><i class="fas fa-times"></i> Xem chi tiết</a>`;
+                        //     document.getElementById('action_' + value.id).insertAdjacentHTML('beforeend', actionHtml);
+                        // }
+                        // else if (value.status === 0) {
+                        //     const actionHtml = `
+                        //                         <a href="order_detail.html?id=${value.id}" class="btn btn-sm btn-success"><i class="fas fa-info-circle"></i> Xem chi tiết</a>
+                        //                     `;
+                        //     document.getElementById('action_' + value.id).insertAdjacentHTML('beforeend', actionHtml);
+                        // } else {
+                        //     const actionHtml = `
+                        //                         <a href="order_detail.html?id=${value.id}" class="btn btn-sm btn-success"><i class="fas fa-info-circle"></i> Gọi món</a>
+                        //                         <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-times"></i> Hủy</a>
+                        //                     `;
+                        //     document.getElementById('action_' + value.id).insertAdjacentHTML('beforeend', actionHtml);
+                        // }
+                    });
+
+                })
+        }
+        fetchFoods();
+
+        function changeStatus(id, status) {
+            let data = {
+                "id": id,
+                "status": status === 0 ? 1 : 0
+            }
+            fetch("http://localhost:8080/api/v1/foods", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+
+                    return {};
+                })
+                .then(result => {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: "Thành công",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "menu.html";
+                            }
+                        });
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Có lỗi xảy ra!");
+                });
+        }
+
+                    document.getElementById('addFoodForm').addEventListener("submit", function(event) {
+                        event.preventDefault(); // Ngăn chặn hành vi gửi form mặc định
+                        const formData = new FormData(this);
+                        let data = {
+                            name: document.getElementById("name").value,
+                            category: document.getElementById("category").value,
+                            price: document.getElementById("price").value,
+                            image: document.getElementById("image").value,
+
+                            status: document.getElementById("status").value === "1"? 1 : 0
+                        };
+                        fetch("http://localhost:8080/api/v1/foods", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => {
+              
+                            return {}; 
+                        })
+                        .then(result => {
+                            Swal.fire({
+                            title: "Thành công!",
+                            text: "Thêm món thành công",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "menu.html";
+                            }
+                        });;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            alert("Có lỗi xảy ra!"); 
+                        });
+                    });
+    </script>
+
+<script src="js/login.js"></script>
+
+</body>
+
+</html>
